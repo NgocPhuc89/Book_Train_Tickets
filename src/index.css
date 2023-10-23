@@ -1,0 +1,22 @@
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(237, 243, 247, 0.7);
+
+}
+
+.sidebar {
+    background-color: #b7d3e7;
+    width: 150px;
+}
+
+.tr {
+    background-color: #5d97e9;
+}
