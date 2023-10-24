@@ -21,29 +21,7 @@ const ListCustomer = () => {
     const dispatch = useDispatch();
     const customerData = useSelector((state) => state.customer.data)
     const loading = useSelector((state) => state.customer.loading)
-    console.log(customerData);
 
-    // useEffect(() => {
-    //     const timeout = setTimeout(() => {
-    //         try {
-    //             // setLoading(true)
-    //             // async function getAll() {
-    //             //     let response;
-    //             //     search !== "" ? response = await CustomerService.getCustomerSearch(currentPage, search)
-    //             //         : response = await CustomerService.getCustomers(currentPage)
-
-    //             //     setCustomerList(response.data);
-    //             //     setTotalPage(currentPage + 1);
-    //             //     setLoading(false)
-    //             // }
-    //             // getAll();
-    //         } catch (error) {
-
-    //         }
-    //     }, 1000)
-
-    //     return () => clearTimeout(timeout);
-    // }, [])
 
     useEffect(() => {
         const action = fetchAllCustomer();
@@ -161,10 +139,10 @@ const ListCustomer = () => {
                                 <th>Phone</th>
                                 <th>Pet</th>
                                 <th>Gender</th>
-                                <th>Address</th>
                                 <th>Province</th>
                                 <th>District</th>
                                 <th>Ward</th>
+                                <th>Address</th>
                                 <th>Spa</th>
                                 <th colSpan={2}>Action</th>
                             </tr>
@@ -179,10 +157,10 @@ const ListCustomer = () => {
                                         <td>{item.phone}</td>
                                         <td>{item.pet}</td>
                                         <td>{item.gender}</td>
-                                        <td>{item.address}</td>
                                         <td>{item.locationRegion?.provinceName}</td>
                                         <td>{item.locationRegion?.districtName}</td>
                                         <td>{item.locationRegion?.wardName}</td>
+                                        <td>{item.address}</td>
                                         <td>{item.spa?.join(" , ")}</td>
                                         <td>
                                             <NavLink to={`/customer/edit/${item.id}/${currentPage}`}>

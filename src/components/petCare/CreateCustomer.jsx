@@ -6,105 +6,58 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import swal from 'sweetalert';
 import { useNavigate } from "react-router-dom";
-import LocationRegionService from "../../services/locationRegionService";
-import CustomerService from "../../services/customerService";
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllDistrict, fetchAllProvince, changeProvince, changeDistrict, fetchAllWard, fetchCreateCustomer, changeWard } from "../../redux/customerSlice";
 
 const CreateCustomer = () => {
-    const [create, setCreate] = useState({});
+    const dispatch = useDispatch();
+    const customerData = useSelector((state) => {
+        const { data, spa, locationRegion, loading, province, district, ward } = state.customer
+        return { data, spa, locationRegion, loading, province, district, ward }
+    })
 
     const back = useNavigate();
+
     const createSchema = yup.object({
         name: yup.string()
             .required("Vui Lòng Nhập Tên")
             .min(5, "Tên Phải Từ 5 Kí Tự ")
             .max(30, "Tên Phải Ít Hơn 30 Kí Tự "),
-        // phone: yup.number()
-        //     .matches(/^0\d{9,10}$/, 'Số điện thoại không hợp lệ')
-        //     .required("Vui Lòng Nhập Số Điện Thoại")
-        //     .positive()
-        //     .min(10, "Sai Định Dạng , SDT Gồm 10 Số")
-        //     .max(10, "Sai Định Dạng , SDT Gồm 10 Số")
-        //     .typeError("Sai Định Dạng , SDT Gồm 10 Số"),
         address: yup.string()
             .required("Vui Lòng Nhập Thành Phố")
             .max(30, "Thành Phố Phải Ít Hơn 30 Kí Tự "),
     })
 
-    const [locationRegion, setLocationRegion] = useState({
-        provinceId: 0,
-        provinceName: '',
-        districtId: 0,
-        districtName: '',
-        wardId: 0,
-        wardName: ''
-    });
-
-    const [provinces, setProvinces] = useState([]);
-    const [district, setDistrict] = useState([]);
-    const [ward, setWard] = useState([]);
-
     useEffect(() => {
-        try {
-            async function getALlProvinces() {
-                const provinces = await LocationRegionService.getAllProvince();
-                setProvinces(provinces.data.results)
-            }
-            getALlProvinces();
-        } catch (error) {
-
-        }
+        const action = fetchAllProvince();
+        dispatch(action);
     }, [])
 
     const onChangeProvince = (e) => {
-        const provinceId = e.target.value;
+        const provinceId = e.target.value
         const index = e.nativeEvent.target.selectedIndex;
         const provinceName = e.nativeEvent.target[index].text;
-        getAllDistrict(provinceId);
-
-        setLocationRegion({
-            ...locationRegion,
-            provinceId,
-            provinceName
-        })
-    }
-
-    const getAllDistrict = async (id) => {
-        const district = await LocationRegionService.getAllDistrict(id);
-        setDistrict(district.data.results)
+        console.log(provinceName);
+        dispatch(changeProvince(provinceName));
+        dispatch(fetchAllDistrict(provinceId));
     }
 
     const onChangeDistrict = (e) => {
         const districtId = e.target.value;
         const index = e.nativeEvent.target.selectedIndex;
         const districtName = e.nativeEvent.target[index].text;
-        getAllWard(districtId);
-
-        setLocationRegion({
-            ...locationRegion,
-            districtId,
-            districtName
-        })
-    }
-
-    const getAllWard = async (id) => {
-        const ward = await LocationRegionService.getAllWard(id);
-        setWard(ward.data.results)
+        dispatch(changeDistrict(districtName));
+        dispatch(fetchAllWard(districtId));
     }
 
     const onChangeWard = (e) => {
         const wardId = e.target.value;
         const index = e.nativeEvent.target.selectedIndex;
         const wardName = e.nativeEvent.target[index].text;
-
-        setLocationRegion({
-            ...locationRegion,
-            wardId,
-            wardName
-        })
+        dispatch(changeWard(wardName));
     }
 
 
@@ -112,29 +65,13 @@ const CreateCustomer = () => {
         resolver: yupResolver(createSchema)
     });
 
-    const createStudent = async (value) => {
-        console.log(value);
+    const createCustomer = async (data) => {
+        console.log(data);
         try {
-            const data = {
-                ...value,
-                locationRegion: {
-                    provinceId: locationRegion.provinceId,
-                    provinceName: locationRegion.provinceName,
-                    districtId: locationRegion.districtId,
-                    districtName: locationRegion.districtName,
-                    wardId: locationRegion.wardId,
-                    wardName: locationRegion.wardName
-                }
-            }
-            delete data.province
-            delete data.district
-            delete data.ward
-            await CustomerService.postCustomer(data)
-            console.log(data);
-            // setCreate(data);
+            dispatch(fetchCreateCustomer(data))
             reset();
             swal("Chúc Mừng", "Thêm Mới Thành Công!!!", "success")
-            back("/student/list")
+            back("/")
         } catch (error) {
 
         }
@@ -144,7 +81,7 @@ const CreateCustomer = () => {
         <div className="container d-flex justify-content-center">
             <div className="row col-md-4 rounded mt-5" id="formAddStudent">
                 <h2 className="text-primary text-center mt-4">Create Customer</h2>
-                <form onSubmit={handleSubmit(createStudent)}>
+                <form onSubmit={handleSubmit(createCustomer)}>
                     <div className="row">
                         <div className="col d-flex justify-content-center">
                             <div className="col-lg-6 form-group mb-3 me-2 ">
@@ -189,14 +126,14 @@ const CreateCustomer = () => {
                             <div className="col-lg-6 form-group mb-3 me-2 ">
                                 <label className="label-form">Province</label>
                                 <select
-                                    name="province"
+                                    name="locationRegion.provinceID"
                                     id=""
                                     className={`${errors?.province?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('province')}
+                                    {...register('locationRegion.provinceID')}
                                     onChange={onChangeProvince}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
-                                        provinces.length && provinces.map((item) => (
+                                        customerData.province.map((item) => (
                                             <option value={item.province_id} key={item.province_id}>{item.province_name}</option>
                                         ))
                                     }
@@ -206,14 +143,14 @@ const CreateCustomer = () => {
                             <div className="col-lg-6 form-group mb-3 ">
                                 <label className="label-form">District</label>
                                 <select
-                                    name="district"
+                                    name="locationRegion.districtID"
                                     id="district"
                                     className={`${errors?.district?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('district')}
+                                    {...register('locationRegion.districtID')}
                                     onChange={onChangeDistrict}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
-                                        district.length && district.map((item) => (
+                                        customerData.district.map((item) => (
                                             <option value={item.district_id} key={item.district_id}>{item.district_name}</option>
                                         ))
                                     }
@@ -222,57 +159,52 @@ const CreateCustomer = () => {
                             </div>
                         </div>
                     </div>
-
-
+                    <div className="form-group mb-3 ">
+                        <label className="label-form">Ward</label>
+                        <select
+                            name="locationRegion.wardID"
+                            id="ward"
+                            className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
+                            {...register('locationRegion.wardID')}
+                            onChange={onChangeWard}>
+                            <option value="">--Vui Lòng Chọn</option>
+                            {
+                                customerData.ward.map((item) => (
+                                    <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
+                                ))
+                            }
+                        </select>
+                        <span className="invalid-feedback">{errors?.ward?.message}</span>
+                    </div>
                     <div className="form-group mb-3 ">
                         <label className="label-form">Address</label>
                         <input type="text" name="" id=""
                             className={`${errors?.address?.message ? 'form-control is-invalid' : 'form-control'}`}
-                            {...register('city')} />
+                            {...register('address')} />
                         <span className="invalid-feedback">{errors?.address?.message}</span>
                     </div>
 
-
-                    <div className="form-group mb-3 ">
-                        <label className="label-form">Ward</label>
-                        <select
-                            name="ward"
-                            id="ward"
-                            className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
-                            {...register('ward')}
-                            onChange={onChangeWard}>
-                            <option value="">--Vui Lòng Chọn</option>
-                            {
-                                ward.length && ward.map((item) => (
-                                    <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
-                                ))
-                            }
-
-                        </select>
-                        <span className="invalid-feedback">{errors?.ward?.message}</span>
-                    </div>
-
                     <div className=" mb-3 ">
-                        <label className="label-form">Farvorite
+                        <label className="label-form">Spa
                             <div className="container d-flex ">
                                 <div>
                                     <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="game" id="" value="game" {...register('favorite')} />
-                                        <label className="form-check-label" htmlFor="">Game</label>
+                                        <input className="for-check-input me-2" type="checkbox" name="Chải Lông" id="" value="Chải Lông" {...register('spa')} />
+                                        <label className="form-check-label" htmlFor="">Chải Lông</label>
                                     </div>
                                     <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="music" id="" value="music" {...register('favorite')} />
-                                        <label className="form-check-label" htmlFor="">Music</label>
+                                        <input className="for-check-input me-2" type="checkbox" name="Cắt Móng" id="" value="Cắt Móng" {...register('spa')} />
+                                        <label className="form-check-label" htmlFor="">Cắt Móng</label>
                                     </div>
                                 </div>
                                 <div>
                                     <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="football" id="" value="football" {...register('favorite')} />
-                                        <label className="form-check-label" htmlFor="">Football</label>
+                                        <input className="for-check-input me-2" type="checkbox" name="Đi Dạo" id="" value="Đi Dạo" {...register('spa')} />
+                                        <label className="form-check-label" htmlFor="">Đi Dạo</label>
                                     </div>
                                     <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="swimming" id="" value="swimming" {...register('favorite')} />
-                                        <label className="form-check-label" htmlFor="">Swimming</label>
+                                        <input className="for-check-input me-2" type="checkbox" name="Tắm Pet" id="" value="Tắm Pet" {...register('spa')} />
+                                        <label className="form-check-label" htmlFor="">Tắm Pet</label>
                                     </div>
                                 </div>
                             </div>
