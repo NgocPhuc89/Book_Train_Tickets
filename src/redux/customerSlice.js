@@ -11,6 +11,13 @@ export const fetchAllCustomer = createAsyncThunk(
     }
 )
 
+export const fetchCustomerSearch = createAsyncThunk(
+    'customer/fetchCustomerSearch',
+    async (search) => {
+        const response = await CustomerService.getCustomerSearch(search);
+        return response.data;
+    }
+)
 export const fetchCreateCustomer = createAsyncThunk(
     'customer/fetchCreateCustomer',
     async (data) => {
@@ -48,6 +55,7 @@ export const fetchAllWard = createAsyncThunk(
 export const customerSlice = createSlice({
     name: 'customer',
     initialState: {
+        search: "",
         data: [],
         spa: [],
         currentLocationRegion: {
@@ -78,6 +86,9 @@ export const customerSlice = createSlice({
             const { value, text } = action.payload;
             state.currentLocationRegion.ward_id = value;
             state.currentLocationRegion.ward_name = text;
+        },
+        changeSearch: (state, action) => {
+            state.search = action.payload;
         }
     },
 
@@ -92,8 +103,10 @@ export const customerSlice = createSlice({
             })
             .addCase(fetchAllCustomer.rejected, () => {
 
-            });
-
+            })
+            .addCase(fetchCustomerSearch.fulfilled, (state, action) => {
+                state.data = action.payload;
+            })
         builder
             .addCase(fetchAllProvince.fulfilled, (state, action) => {
                 state.province = action.payload;
@@ -118,5 +131,11 @@ export const customerSlice = createSlice({
             });
     }
 })
-export const { changeProvince, changeDistrict, changeWard, changeCurrenCustomer, changeLocationRegion } = customerSlice.actions;
+export const { changeProvince,
+    changeDistrict,
+    changeWard,
+    changeCurrenCustomer,
+    changeLocationRegion,
+    changeSearch
+} = customerSlice.actions;
 export default customerSlice.reducer

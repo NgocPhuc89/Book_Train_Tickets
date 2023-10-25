@@ -5,8 +5,8 @@ class CustomerService {
     static getCustomers() {
         return axios.get(`http://localhost:3000/Customer`);
     }
-    static getCustomerSearch(page, search) {
-        return axios.get(`http://localhost:3000/Customer?_page=${page}${search ? `&q=${encodeURIComponent(search)}` : ''}`);
+    static getCustomerSearch(search) {
+        return axios.get(`http://localhost:3000/Customer?${search ? `&q=${encodeURIComponent(search)}` : ''}`);
     }
     static getCustomer(id) {
         return axios.get(`http://localhost:3000/Customer/${id}`);

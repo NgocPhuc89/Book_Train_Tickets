@@ -6,7 +6,7 @@ import Spinner from "../layout/Spinner";
 import { useEffect, useState } from "react";
 import CustomerService from "../../services/customerService";
 import swal from "sweetalert";
-import { fetchAllCustomer } from "../../redux/customerSlice";
+import { changeSearch, fetchAllCustomer, fetchCustomerSearch } from "../../redux/customerSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const ListCustomer = () => {
@@ -16,17 +16,19 @@ const ListCustomer = () => {
     const [totalPage, setTotalPage] = useState(0);
     const [action, setAction] = useState('next');
     const [background, setBackground] = useState("pink");
-    const [search, setSearch] = useState('');
+    // const [search, setSearch] = useState('');
 
     const dispatch = useDispatch();
     const customerData = useSelector((state) => state.customer.data)
     const loading = useSelector((state) => state.customer.loading)
-
+    const search = useSelector((state) => state.customer.search)
 
     useEffect(() => {
-        const action = fetchAllCustomer();
+        const action = fetchCustomerSearch(search);
         dispatch(action);
-    }, [])
+    }, [search])
+
+
 
     const nextPage = () => {
         currentPage < totalPage ? setCurrentPage(currentPage + 1)(setAction('next')) : ''
@@ -91,10 +93,10 @@ const ListCustomer = () => {
     }, 1000 * 1)
 
     const handleInput = (e) => {
-        handleSearch(e)
+        // handleSearch(e)
         // e.preventDefault();
         const value = e.target.value;
-        setSearch(value);
+        dispatch(changeSearch(value));
         // setCurrentPage(1);
     }
 
