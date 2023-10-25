@@ -157,9 +157,9 @@ const ListCustomer = () => {
                                         <td>{item.phone}</td>
                                         <td>{item.pet}</td>
                                         <td>{item.gender}</td>
-                                        <td>{item.locationRegion?.provinceName}</td>
-                                        <td>{item.locationRegion?.districtName}</td>
-                                        <td>{item.locationRegion?.wardName}</td>
+                                        <td>{item.locationRegion?.province_name}</td>
+                                        <td>{item.locationRegion?.district_name}</td>
+                                        <td>{item.locationRegion?.ward_name}</td>
                                         <td>{item.address}</td>
                                         <td>{item.spa?.join(" , ")}</td>
                                         <td>

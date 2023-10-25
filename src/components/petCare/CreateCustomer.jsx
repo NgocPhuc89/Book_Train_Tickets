@@ -10,13 +10,13 @@ import { useEffect } from "react";
 import swal from 'sweetalert';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllDistrict, fetchAllProvince, changeProvince, changeDistrict, fetchAllWard, fetchCreateCustomer, changeWard } from "../../redux/customerSlice";
+import { fetchAllDistrict, fetchAllProvince, changeProvince, changeDistrict, fetchAllWard, fetchCreateCustomer, changeWard, changeLocationRegion } from "../../redux/customerSlice";
 
 const CreateCustomer = () => {
     const dispatch = useDispatch();
     const customerData = useSelector((state) => {
-        const { data, spa, locationRegion, loading, province, district, ward } = state.customer
-        return { data, spa, locationRegion, loading, province, district, ward }
+        const { data, spa, loading, province, district, ward, currentLocationRegion } = state.customer
+        return { data, spa, loading, province, district, ward, currentLocationRegion }
     })
 
     const back = useNavigate();
@@ -37,27 +37,27 @@ const CreateCustomer = () => {
     }, [])
 
     const onChangeProvince = (e) => {
-        const provinceId = e.target.value
+        const value = e.target.value
         const index = e.nativeEvent.target.selectedIndex;
-        const provinceName = e.nativeEvent.target[index].text;
-        console.log(provinceName);
-        dispatch(changeProvince(provinceName));
-        dispatch(fetchAllDistrict(provinceId));
+        const text = e.nativeEvent.target[index].text;
+
+        dispatch(changeProvince({ value, text }));
+        dispatch(fetchAllDistrict(value));
     }
 
     const onChangeDistrict = (e) => {
-        const districtId = e.target.value;
+        const value = e.target.value
         const index = e.nativeEvent.target.selectedIndex;
-        const districtName = e.nativeEvent.target[index].text;
-        dispatch(changeDistrict(districtName));
-        dispatch(fetchAllWard(districtId));
+        const text = e.nativeEvent.target[index].text;
+        dispatch(changeDistrict({ value, text }));
+        dispatch(fetchAllWard(value));
     }
 
     const onChangeWard = (e) => {
-        const wardId = e.target.value;
+        const value = e.target.value;
         const index = e.nativeEvent.target.selectedIndex;
-        const wardName = e.nativeEvent.target[index].text;
-        dispatch(changeWard(wardName));
+        const text = e.nativeEvent.target[index].text;
+        dispatch(changeWard({ value, text }));
     }
 
 
@@ -67,6 +67,7 @@ const CreateCustomer = () => {
 
     const createCustomer = async (data) => {
         console.log(data);
+        data.locationRegion = customerData.currentLocationRegion;
         try {
             dispatch(fetchCreateCustomer(data))
             reset();
@@ -126,10 +127,10 @@ const CreateCustomer = () => {
                             <div className="col-lg-6 form-group mb-3 me-2 ">
                                 <label className="label-form">Province</label>
                                 <select
-                                    name="locationRegion.provinceID"
+                                    name="province_id"
                                     id=""
                                     className={`${errors?.province?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.provinceID')}
+                                    {...register('locationRegion.province')}
                                     onChange={onChangeProvince}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
@@ -143,10 +144,10 @@ const CreateCustomer = () => {
                             <div className="col-lg-6 form-group mb-3 ">
                                 <label className="label-form">District</label>
                                 <select
-                                    name="locationRegion.districtID"
+                                    name="district_id"
                                     id="district"
                                     className={`${errors?.district?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.districtID')}
+                                    {...register('locationRegion.district')}
                                     onChange={onChangeDistrict}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
@@ -159,31 +160,35 @@ const CreateCustomer = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group mb-3 ">
-                        <label className="label-form">Ward</label>
-                        <select
-                            name="locationRegion.wardID"
-                            id="ward"
-                            className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
-                            {...register('locationRegion.wardID')}
-                            onChange={onChangeWard}>
-                            <option value="">--Vui Lòng Chọn</option>
-                            {
-                                customerData.ward.map((item) => (
-                                    <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
-                                ))
-                            }
-                        </select>
-                        <span className="invalid-feedback">{errors?.ward?.message}</span>
-                    </div>
-                    <div className="form-group mb-3 ">
-                        <label className="label-form">Address</label>
-                        <input type="text" name="" id=""
-                            className={`${errors?.address?.message ? 'form-control is-invalid' : 'form-control'}`}
-                            {...register('address')} />
-                        <span className="invalid-feedback">{errors?.address?.message}</span>
-                    </div>
 
+                    <div className="row">
+                        <div className="col d-flex justify-content-center">
+                            <div className="col-lg-6 form-group mb-3  me-2">
+                                <label className="label-form">Ward</label>
+                                <select
+                                    name="ward_id"
+                                    id="ward"
+                                    className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                    {...register('locationRegion.ward')}
+                                    onChange={onChangeWard}>
+                                    <option value="">--Vui Lòng Chọn</option>
+                                    {
+                                        customerData.ward.map((item) => (
+                                            <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
+                                        ))
+                                    }
+                                </select>
+                                <span className="invalid-feedback">{errors?.ward?.message}</span>
+                            </div>
+                            <div className="col-lg-6 form-group mb-3 ">
+                                <label className="label-form">Address</label>
+                                <input type="text" name="" id=""
+                                    className={`${errors?.address?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                    {...register('address')} />
+                                <span className="invalid-feedback">{errors?.address?.message}</span>
+                            </div>
+                        </div>
+                    </div>
                     <div className=" mb-3 ">
                         <label className="label-form">Spa
                             <div className="container d-flex ">
@@ -216,8 +221,8 @@ const CreateCustomer = () => {
                             onClick={() => reset()}>Cancel</button>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     )
 }
 

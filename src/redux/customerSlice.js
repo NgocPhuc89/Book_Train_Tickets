@@ -14,6 +14,7 @@ export const fetchAllCustomer = createAsyncThunk(
 export const fetchCreateCustomer = createAsyncThunk(
     'customer/fetchCreateCustomer',
     async (data) => {
+
         const response = await CustomerService.postCustomer(data);
         return response.data
     }
@@ -49,8 +50,13 @@ export const customerSlice = createSlice({
     initialState: {
         data: [],
         spa: [],
-        locationRegion: {
-
+        currentLocationRegion: {
+            province_id: "",
+            province_name: "",
+            district_id: "",
+            district_name: "",
+            ward_id: "",
+            ward_name: ""
         },
         province: [],
         district: [],
@@ -59,13 +65,19 @@ export const customerSlice = createSlice({
     },
     reducers: {
         changeProvince: (state, action) => {
-            state.locationRegion.provinceName = action.payload;
+            const { value, text } = action.payload;
+            state.currentLocationRegion.province_id = value;
+            state.currentLocationRegion.province_name = text;
         },
         changeDistrict: (state, action) => {
-            state.locationRegion.districtName = action.payload;
+            const { value, text } = action.payload;
+            state.currentLocationRegion.district_id = value;
+            state.currentLocationRegion.district_name = text;
         },
         changeWard: (state, action) => {
-            state.locationRegion.wardName = action.payload;
+            const { value, text } = action.payload;
+            state.currentLocationRegion.ward_id = value;
+            state.currentLocationRegion.ward_name = text;
         }
     },
 
@@ -98,8 +110,7 @@ export const customerSlice = createSlice({
                 state.loading = true;
             })
             .addCase(fetchCreateCustomer.fulfilled, (state, action) => {
-                console.log(action.payload);
-                state.data.push(action.payload);
+                state.data.push(action.payload)
                 state.loading = false;
             })
             .addCase(fetchCreateCustomer.rejected, () => {
@@ -107,5 +118,5 @@ export const customerSlice = createSlice({
             });
     }
 })
-export const { changeProvince, changeDistrict, changeWard } = customerSlice.actions;
+export const { changeProvince, changeDistrict, changeWard, changeCurrenCustomer, changeLocationRegion } = customerSlice.actions;
 export default customerSlice.reducer
