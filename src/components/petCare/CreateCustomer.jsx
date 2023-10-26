@@ -8,7 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { useEffect } from "react";
 import swal from 'sweetalert';
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllDistrict, fetchAllProvince, changeProvince, changeDistrict, fetchAllWard, fetchCreateCustomer, changeWard, changeLocationRegion } from "../../redux/customerSlice";
 
@@ -215,6 +215,7 @@ const CreateCustomer = () => {
                         </label>
                     </div>
                     <div className="d-flex justify-content-center mb-3">
+                        <NavLink type="button" className="btn btn-secondary me-3" to={'/'}>Back</NavLink>
                         <button type="submit" className="btn btn-danger me-3">Create</button>
                         <button type="reset" className="btn btn-success"
                             onClick={() => reset()}>Cancel</button>
