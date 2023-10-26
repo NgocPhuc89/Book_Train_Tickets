@@ -37,9 +37,7 @@ export const fetchCreateCustomer = createAsyncThunk(
 export const fetchEditCustomer = createAsyncThunk(
     'customer/fetchEditCustomer',
     async (data) => {
-        console.log(data);
         const response = await CustomerService.editCustomer(data.customerId, data);
-        console.log("data", response.data);
         return response.data;
     }
 )
@@ -47,9 +45,7 @@ export const fetchEditCustomer = createAsyncThunk(
 export const fetchDeleteCustomer = createAsyncThunk(
     'customer/fetchDeleteCustomer',
     async (customerId) => {
-        console.log(customerId);
         const response = await CustomerService.deleteCustomer(customerId);
-        console.log(response);
         return response.data;
     }
 )
@@ -165,7 +161,6 @@ export const customerSlice = createSlice({
         builder  // delete    
             .addCase(fetchDeleteCustomer.fulfilled, (state, action) => {
                 const id = action.meta.arg;
-                console.log(action.meta.arg);
                 state.data = state.data.filter((prev) => prev.id !== id)
             });
         builder  //show locationRegion
