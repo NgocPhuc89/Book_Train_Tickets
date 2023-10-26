@@ -11,6 +11,14 @@ export const fetchAllCustomer = createAsyncThunk(
     }
 )
 
+export const fetchCustomerById = createAsyncThunk(
+    'customer/fetchCustomerById',
+    async (customerId) => {
+        const response = await CustomerService.getCustomer(customerId);
+        return response.data
+    }
+)
+
 export const fetchCustomerSearch = createAsyncThunk(
     'customer/fetchCustomerSearch',
     async (search) => {
@@ -21,9 +29,28 @@ export const fetchCustomerSearch = createAsyncThunk(
 export const fetchCreateCustomer = createAsyncThunk(
     'customer/fetchCreateCustomer',
     async (data) => {
-
         const response = await CustomerService.postCustomer(data);
         return response.data
+    }
+)
+
+export const fetchEditCustomer = createAsyncThunk(
+    'customer/fetchEditCustomer',
+    async (data) => {
+        console.log(data);
+        const response = await CustomerService.editCustomer(data.customerId, data);
+        console.log("data", response.data);
+        return response.data;
+    }
+)
+
+export const fetchDeleteCustomer = createAsyncThunk(
+    'customer/fetchDeleteCustomer',
+    async (customerId) => {
+        console.log(customerId);
+        const response = await CustomerService.deleteCustomer(customerId);
+        console.log(response);
+        return response.data;
     }
 )
 
@@ -34,7 +61,6 @@ export const fetchAllProvince = createAsyncThunk(
         return response.data.results;
     }
 )
-console.log(fetchAllProvince);
 
 export const fetchAllDistrict = createAsyncThunk(
     'customer/fetchAllDistrict',
@@ -66,6 +92,8 @@ export const customerSlice = createSlice({
             ward_id: "",
             ward_name: ""
         },
+        currenCustomer: {},
+        customerId: "",
         province: [],
         district: [],
         ward: [],
@@ -89,6 +117,9 @@ export const customerSlice = createSlice({
         },
         changeSearch: (state, action) => {
             state.search = action.payload;
+        },
+        editCustomer: (state, action) => {
+            state.customerId = action.payload;
         }
     },
 
@@ -103,11 +134,41 @@ export const customerSlice = createSlice({
             })
             .addCase(fetchAllCustomer.rejected, () => {
 
+            });
+        builder  //create
+            .addCase(fetchCreateCustomer.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchCreateCustomer.fulfilled, (state, action) => {
+                state.data.push(action.payload)
+                state.loading = false;
+            })
+            .addCase(fetchCreateCustomer.rejected, () => {
+
+            });
+        builder  //update
+            .addCase(fetchCustomerById.fulfilled, (state, action) => {
+                state.currenCustomer = action.payload;
+                state.currentLocationRegion = action.payload.locationRegion
+            })
+            .addCase(fetchEditCustomer.fulfilled, (state, action) => {
+                state.data = action.payload;
+            });
+        builder  //show list & search 
+            .addCase(fetchCustomerSearch.pending, (state) => {
+                state.loading = true;
             })
             .addCase(fetchCustomerSearch.fulfilled, (state, action) => {
                 state.data = action.payload;
-            })
-        builder
+                state.loading = false;
+            });
+        builder  // delete    
+            .addCase(fetchDeleteCustomer.fulfilled, (state, action) => {
+                const id = action.meta.arg;
+                console.log(action.meta.arg);
+                state.data = state.data.filter((prev) => prev.id !== id)
+            });
+        builder  //show locationRegion
             .addCase(fetchAllProvince.fulfilled, (state, action) => {
                 state.province = action.payload;
                 state.district = [];
@@ -119,16 +180,7 @@ export const customerSlice = createSlice({
             .addCase(fetchAllWard.fulfilled, (state, action) => {
                 state.ward = action.payload;
             })
-            .addCase(fetchCreateCustomer.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchCreateCustomer.fulfilled, (state, action) => {
-                state.data.push(action.payload)
-                state.loading = false;
-            })
-            .addCase(fetchCreateCustomer.rejected, () => {
-
-            });
+            ;
     }
 })
 export const { changeProvince,

@@ -14,8 +14,8 @@ class CustomerService {
     static postCustomer(data) {
         return axios.post('http://localhost:3000/Customer', data);
     }
-    static putCustomer(id, data) {
-        return axios.put(`http://localhost:3000/Customer/${id}`, data);
+    static editCustomer(id, data) {
+        return axios.patch(`http://localhost:3000/Customer/${id}`, data);
     }
     static deleteCustomer(id) {
         return axios.delete(`http://localhost:3000/Customer/${id}`)

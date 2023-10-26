@@ -18,7 +18,7 @@ function App() {
         <Routes>
           <Route path='/' element={<ListCustomer />} />
           <Route path='/customer/create' element={<CreateCustomer />} />
-          <Route path='/customer/edit/:customerId/:page' element={<EditCustomer />} />
+          <Route path='/customer/edit/:customerId' element={<EditCustomer />} />
         </Routes>
       </Provider>
     </div>

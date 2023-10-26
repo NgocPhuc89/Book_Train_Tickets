@@ -1,12 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-empty */
 /* eslint-disable no-inner-declarations */
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Spinner from "../layout/Spinner";
 import { useEffect, useState } from "react";
-import CustomerService from "../../services/customerService";
 import swal from "sweetalert";
-import { changeSearch, fetchAllCustomer, fetchCustomerSearch } from "../../redux/customerSlice";
+import { changeSearch, fetchAllCustomer, fetchCustomerSearch, fetchDeleteCustomer } from "../../redux/customerSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const ListCustomer = () => {
@@ -17,18 +16,19 @@ const ListCustomer = () => {
     const [action, setAction] = useState('next');
     const [background, setBackground] = useState("pink");
     // const [search, setSearch] = useState('');
-
+    const back = useNavigate();
     const dispatch = useDispatch();
     const customerData = useSelector((state) => state.customer.data)
     const loading = useSelector((state) => state.customer.loading)
     const search = useSelector((state) => state.customer.search)
 
     useEffect(() => {
-        const action = fetchCustomerSearch(search);
-        dispatch(action);
+        const timeout = setTimeout(() => {
+            const action = fetchCustomerSearch(search);
+            dispatch(action);
+        }, 1000 * 1)
+        return () => clearTimeout(timeout);
     }, [search])
-
-
 
     const nextPage = () => {
         currentPage < totalPage ? setCurrentPage(currentPage + 1)(setAction('next')) : ''
@@ -45,33 +45,32 @@ const ListCustomer = () => {
         setAction('last')
     }
 
-    // const deleteStudent = async (customer, id) => {
-    //     try {
-    //         swal({
-    //             title: "Cảnh Báo!!",
-    //             text: "Bạn Chắc Chắn Muốn Xóa " + "<" + customer + ">" + " Khỏi Danh Sách",
-    //             icon: "warning",
-    //             buttons: true,
-    //             dangerMode: true,
-    //         })
-    //             .then((del) => {
-    //                 del ? (CustomerService.deleteCustomer(id), swal("Thông Báo", "Xóa Thành Công" + "<" + customer + ">" + " Khỏi Danh Sách", "success"),
-    //                     setCustomerList((preList) => preList.filter((customer) => customer.id != id))) : ''
-    //             })
+    const deleteCustomer = async (id, name) => {
+        try {
+            swal({
+                title: "Cảnh Báo!!",
+                text: "Bạn Chắc Chắn Muốn Xóa " + "<" + name + ">" + " Khỏi Danh Sách",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((del) => {
+                    console.log(id);
+                    del ? (dispatch(fetchDeleteCustomer(id)),
+                        swal("Thông Báo", "Xóa Thành Công" + "<" + name + ">" + " Khỏi Danh Sách", "success"),
+                        back("/")) : ''
+                })
 
-    //     } catch (error) {
+        } catch (error) {
 
-    //     }
-    // }
-
-    const deleteStudent = () => {
-
+        }
     }
+    // }setCustomerList((preList) => preList.filter((customer) => customer.id != id)))
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setBackground("white");
-        }, 1000 * 3)
+        }, 1000 * 2)
 
         return () => clearTimeout(timer)
     }, [])
@@ -93,16 +92,8 @@ const ListCustomer = () => {
     }, 1000 * 1)
 
     const handleInput = (e) => {
-        // handleSearch(e)
-        // e.preventDefault();
         const value = e.target.value;
         dispatch(changeSearch(value));
-        // setCurrentPage(1);
-    }
-
-    const handleSearch = (e) => {
-        e.preventDefault();
-        setCurrentPage(1);
     }
 
     return (
@@ -117,7 +108,7 @@ const ListCustomer = () => {
                             Create
                         </NavLink>
                     </button>
-                    <form className="d-flex mt-5" role="search" onSubmit={handleSearch}>
+                    <form className="d-flex mt-5" role="search">
                         <input
                             className="form-control me-2"
                             type="search"
@@ -126,9 +117,6 @@ const ListCustomer = () => {
                             value={search}
                             onChange={(e) => handleInput(e)}
                         />
-                        <button className="btn btn-outline-success" type="submit">
-                            Search
-                        </button>
                     </form>
                 </div>
 
@@ -151,10 +139,10 @@ const ListCustomer = () => {
                         </thead>
                         <tbody>
                             {
-                                customerData.map((item) => (
+                                customerData.length && customerData.map((item, index) => (
                                     <tr key={item.id} id={item.id}
                                         style={{ background: item.id === id ? background : "white" }}>
-                                        <td>{item.id}</td>
+                                        <td>{index + 1}</td>
                                         <td>{item.name}</td>
                                         <td>{item.phone}</td>
                                         <td>{item.pet}</td>
@@ -165,14 +153,13 @@ const ListCustomer = () => {
                                         <td>{item.address}</td>
                                         <td>{item.spa?.join(" , ")}</td>
                                         <td>
-                                            <NavLink to={`/customer/edit/${item.id}/${currentPage}`}>
+                                            <NavLink to={`/customer/edit/${item.id}`}>
                                                 <i role="button" className="fa fa-edit me-3 btn btn-outline-success" />
                                             </NavLink>
-
                                         </td>
                                         <td>
                                             <i role="button" className="fa fa-trash me-1 btn btn-outline-danger"
-                                                onClick={() => deleteStudent(item.name, item.id)} />
+                                                onClick={() => deleteCustomer(item.id, item.name)} />
                                         </td>
                                     </tr>
                                 ))

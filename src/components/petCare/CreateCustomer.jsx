@@ -66,7 +66,6 @@ const CreateCustomer = () => {
     });
 
     const createCustomer = async (data) => {
-        console.log(data);
         data.locationRegion = customerData.currentLocationRegion;
         try {
             dispatch(fetchCreateCustomer(data))
