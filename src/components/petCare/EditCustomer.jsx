@@ -86,12 +86,6 @@ const EditCustomer = () => {
             dispatch(fetchEditCustomer({ ...data, customerId }))
             swal("Chúc Mừng", "Chỉnh Sửa Thông Tin Thành Công", "success");
             back('/')
-            // {
-            //     state: {
-            //         page,
-            //         id: customerId
-            //     }
-            // })
         } catch (error) {
             console.log(error);
         }

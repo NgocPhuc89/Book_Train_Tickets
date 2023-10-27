@@ -9,18 +9,17 @@ import { changeSearch, fetchAllCustomer, fetchCustomerSearch, fetchDeleteCustome
 import { useDispatch, useSelector } from "react-redux";
 
 const ListCustomer = () => {
-    const id = useLocation().state?.id;
     const page = useLocation().state?.page;
     const [currentPage, setCurrentPage] = useState(page || 1);
     const [totalPage, setTotalPage] = useState(0);
     const [action, setAction] = useState('next');
-    const [background, setBackground] = useState("pink");
-    // const [search, setSearch] = useState('');
+    const [background, setBackground] = useState("table-danger");
     const back = useNavigate();
     const dispatch = useDispatch();
     const customerData = useSelector((state) => state.customer.data)
     const loading = useSelector((state) => state.customer.loading)
     const search = useSelector((state) => state.customer.search)
+    const id = useSelector((state) => state.customer.customerId)
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -65,17 +64,16 @@ const ListCustomer = () => {
 
         }
     }
-    // }setCustomerList((preList) => preList.filter((customer) => customer.id != id)))
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setBackground("white");
-        }, 1000 * 2)
+        }, 1000 * 3)
 
         return () => clearTimeout(timer)
     }, [])
 
-    //cuộn xuống theo id và page
+    //cuộn xuống theo id 
     function scrollToElement(elementId) {
         const element = document.getElementById(elementId);
         if (element) {
@@ -89,7 +87,7 @@ const ListCustomer = () => {
         if (id && customerData.length > 0) {
             scrollToElement(id);
         }
-    }, 1000 * 1)
+    }, 500)
 
     const handleInput = (e) => {
         const value = e.target.value;
@@ -120,10 +118,10 @@ const ListCustomer = () => {
                     </form>
                 </div>
 
-                <section className="mt-4">
-                    <table className="table table-hover">
+                <div className="mt-4">
+                    <table className="table">
                         <thead>
-                            <tr className="tr">
+                            <tr className="table-info">
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Phone</th>
@@ -140,8 +138,8 @@ const ListCustomer = () => {
                         <tbody>
                             {
                                 customerData.length && customerData.map((item, index) => (
-                                    <tr key={item.id} id={item.id}
-                                        style={{ background: item.id === id ? background : "white" }}>
+                                    <tr key={index} id={item.id}
+                                        className={id === item.id ? background : ""}>
                                         <td>{index + 1}</td>
                                         <td>{item.name}</td>
                                         <td>{item.phone}</td>
@@ -167,7 +165,7 @@ const ListCustomer = () => {
                         </tbody>
                     </table>
 
-                </section>
+                </div>
                 <section>
                     <div className="d-flex justify-content-between mb-2">
                         <div>

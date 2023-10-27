@@ -120,18 +120,18 @@ export const customerSlice = createSlice({
     },
 
     extraReducers: (builder) => {
-        builder
-            .addCase(fetchAllCustomer.pending, (state) => {
+        builder  // show list customer & search 
+            .addCase(fetchCustomerSearch.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchAllCustomer.fulfilled, (state, action) => {
+            .addCase(fetchCustomerSearch.fulfilled, (state, action) => {
                 state.data = action.payload;
                 state.loading = false;
             })
-            .addCase(fetchAllCustomer.rejected, () => {
+            .addCase(fetchCustomerSearch.rejected, () => {
 
             });
-        builder  //create
+        builder  // create
             .addCase(fetchCreateCustomer.pending, (state) => {
                 state.loading = true;
             })
@@ -142,28 +142,21 @@ export const customerSlice = createSlice({
             .addCase(fetchCreateCustomer.rejected, () => {
 
             });
-        builder  //update
+        builder  // update
             .addCase(fetchCustomerById.fulfilled, (state, action) => {
                 state.currenCustomer = action.payload;
                 state.currentLocationRegion = action.payload.locationRegion
             })
             .addCase(fetchEditCustomer.fulfilled, (state, action) => {
                 state.data = action.payload;
-            });
-        builder  //show list & search 
-            .addCase(fetchCustomerSearch.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(fetchCustomerSearch.fulfilled, (state, action) => {
-                state.data = action.payload;
-                state.loading = false;
+                state.customerId = action.meta.arg.id;
             });
         builder  // delete    
             .addCase(fetchDeleteCustomer.fulfilled, (state, action) => {
                 const id = action.meta.arg;
                 state.data = state.data.filter((prev) => prev.id !== id)
             });
-        builder  //show locationRegion
+        builder  // show locationRegion
             .addCase(fetchAllProvince.fulfilled, (state, action) => {
                 state.province = action.payload;
                 state.district = [];
@@ -174,8 +167,7 @@ export const customerSlice = createSlice({
             })
             .addCase(fetchAllWard.fulfilled, (state, action) => {
                 state.ward = action.payload;
-            })
-            ;
+            });
     }
 })
 export const { changeProvince,
