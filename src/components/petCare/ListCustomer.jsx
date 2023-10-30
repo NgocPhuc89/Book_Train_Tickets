@@ -48,7 +48,7 @@ const ListCustomer = () => {
         try {
             swal({
                 title: "Cảnh Báo!!",
-                text: "Bạn Chắc Chắn Muốn Xóa " + "<" + name + ">" + " Khỏi Danh Sách",
+                text: "Bạn Chắc Chắn Muốn Xóa  " + "<" + name + " > " + "  Khỏi Danh Sách",
                 icon: "warning",
                 buttons: true,
                 dangerMode: true,
