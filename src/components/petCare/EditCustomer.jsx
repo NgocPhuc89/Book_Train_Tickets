@@ -39,18 +39,6 @@ const EditCustomer = () => {
         values: currenCustomer
     });
 
-    // useEffect(() => {
-    //     try {
-    //         async function getALlProvinces() {
-    //             const provinces = await LocationRegionService.getAllProvince();
-    //             setProvinces(provinces.data.results)
-    //         }
-    //         getALlProvinces();
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }, [])
-
     useEffect(() => {
         const action = fetchAllProvince();
         dispatch(action);
@@ -92,157 +80,148 @@ const EditCustomer = () => {
     }
 
     return (
-        <div className="container d-flex justify-content-center">
-            <div className="row col-md-4 rounded mt-5" id="formAddStudent">
+        <div className="container">
+            <div className="row mt-5">
                 <h2 className="text-primary text-center mt-4">Update Customer</h2>
                 <form onSubmit={handleSubmit(editCustomer)}>
                     <div className="row">
-                        <div className="col d-flex justify-content-center">
-                            <div className="col-lg-6 form-group mb-3 me-2 ">
-                                <label className="label-form">Name</label>
-                                <input type="text" name="" id=""
-                                    className={`${errors?.name?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('name')} />
-                                <span className="invalid-feedback" >{errors?.name?.message}</span>
-                            </div>
-                            <div className="col-lg-6 form-group mb-3 ">
-                                <label className="label-form">Phone</label>
-                                <input type="text" name="" id=""
-                                    className={`${errors?.phone?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('phone')} />
-                                <span className="invalid-feedback">{errors?.phone?.message}</span>
-                            </div>
+                        <div className="col-lg-4 form-group mb-3 ">
+                            <label className="label-form mb-2">Name</label>
+                            <input type="text" name="" id=""
+                                className={`${errors?.name?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('name')} />
+                            <span className="invalid-feedback" >{errors?.name?.message}</span>
+                        </div>
+                        <div className="col-lg-4 form-group mb-3 ">
+                            <label className="label-form mb-2">Phone</label>
+                            <input type="text" name="" id=""
+                                className={`${errors?.phone?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('phone')} />
+                            <span className="invalid-feedback">{errors?.phone?.message}</span>
+                        </div>
+                        <div className="col-lg-4 form-group mb-3">
+                            <label className="label-form mb-2">Pet</label>
+                            <select name="" id="" className="form-select"
+                                {...register('pet')}>
+                                <option value="dog"  >Dog</option>
+                                <option value="cat" >Cat</option>
+                            </select>
+                            <span className="invalid-feedback">{errors?.pet?.message}</span>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col d-flex justify-content-center">
-                            <div className="col-lg-6 form-group mb-3 me-2 ">
-                                <label className="label-form">Pet</label>
-                                <select name="" id="" className="form-select"
-                                    {...register('pet')}>
-                                    <option value="dog"  >Dog</option>
-                                    <option value="cat" >Cat</option>
-                                </select>
-                                <span className="invalid-feedback">{errors?.pet?.message}</span>
-                            </div>
-                            <div className="col-lg-6 form-group mb-3 ">
-                                <label className="label-form">Gender</label>
-                                <select name="" id="" className="form-select"
-                                    {...register('gender')}>
-                                    <option value="male"  >Male</option>
-                                    <option value="female" >Female</option>
-                                </select>
-                            </div>
+                        <div className="col-lg-4 form-group mb-3">
+                            <label className="label-form mb-2">Province</label>
+                            <select
+                                name="province_id"
+                                id="province"
+                                className={`${errors?.province?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('locationRegion.province')}
+                                onChange={onChangeProvince}>
+                                <option value={currentLocationRegion?.province_id}>{currentLocationRegion?.province_name}</option>
+                                {
+                                    province.map((item) => (
+                                        <option value={item.province_id} key={item.province_id}>{item.province_name}</option>
+                                    ))
+                                }
+                            </select>
+                            <span className="invalid-feedback">{errors?.province?.message}</span>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col d-flex justify-content-center">
-                            <div className="col-lg-6 form-group mb-3 me-2 ">
-                                <label className="label-form">Province</label>
-                                <select
-                                    name="province_id"
-                                    id="province"
-                                    className={`${errors?.province?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.province')}
-                                    onChange={onChangeProvince}>
-                                    <option value={currentLocationRegion?.province_id}>{currentLocationRegion?.province_name}</option>
-                                    {
-                                        province.map((item) => (
-                                            <option value={item.province_id} key={item.province_id}>{item.province_name}</option>
-                                        ))
-                                    }
-                                </select>
-                                <span className="invalid-feedback">{errors?.province?.message}</span>
-                            </div>
-                            <div className="col-lg-6 form-group mb-3 ">
-                                <label className="label-form">District</label>
-                                <select
-                                    name="district_id"
-                                    id="district"
-                                    className={`${errors?.district?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.district')}
-                                    onChange={onChangeDistrict}>
-                                    <option value={currentLocationRegion?.district_id}>{currentLocationRegion?.district_name}</option>
-                                    {
-                                        district.map((item) => (
-                                            <option value={item.district_id} key={item.district_id}>{item.district_name}</option>
-                                        ))
-                                    }
-                                </select>
-                                <span className="invalid-feedback">{errors?.district?.message}</span>
-                            </div>
+                        <div className="col-lg-4 form-group mb-3 ">
+                            <label className="label-form mb-2">District</label>
+                            <select
+                                name="district_id"
+                                id="district"
+                                className={`${errors?.district?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('locationRegion.district')}
+                                onChange={onChangeDistrict}>
+                                <option value={currentLocationRegion?.district_id}>{currentLocationRegion?.district_name}</option>
+                                {
+                                    district.map((item) => (
+                                        <option value={item.district_id} key={item.district_id}>{item.district_name}</option>
+                                    ))
+                                }
+                            </select>
+                            <span className="invalid-feedback">{errors?.district?.message}</span>
+                        </div>
+                        <div className="col-lg-4 form-group mb-3">
+                            <label className="label-form mb-2">Ward</label>
+                            <select
+                                name="ward_id"
+                                id="ward"
+                                className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('locationRegion.ward')}
+                                onChange={onChangeWard}>
+                                <option value={currentLocationRegion?.ward_id}>{currentLocationRegion?.ward_name}</option>
+                                {
+                                    ward.map((item) => (
+                                        <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
+                                    ))
+                                }
+                            </select>
+                            <span className="invalid-feedback">{errors?.ward?.message}</span>
                         </div>
                     </div>
 
                     <div className="row">
-                        <div className="col d-flex justify-content-center">
-                            <div className="col-lg-6 form-group mb-3  me-2">
-                                <label className="label-form">Ward</label>
-                                <select
-                                    name="ward_id"
-                                    id="ward"
-                                    className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.ward')}
-                                    onChange={onChangeWard}>
-                                    <option value={currentLocationRegion?.ward_id}>{currentLocationRegion?.ward_name}</option>
-                                    {
-                                        ward.map((item) => (
-                                            <option value={item.ward_id} key={item.ward_id}>{item.ward_name}</option>
-                                        ))
-                                    }
-                                </select>
-                                <span className="invalid-feedback">{errors?.ward?.message}</span>
-                            </div>
-                            <div className="col-lg-6 form-group mb-3 ">
-                                <label className="label-form">Address</label>
-                                <input type="text" name="" id=""
-                                    className={`${errors?.address?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('address')} />
-                                <span className="invalid-feedback">{errors?.address?.message}</span>
-                            </div>
+                        <div className="col-lg-4 form-group mb-3 ">
+                            <label className="label-form mb-2">Address</label>
+                            <input type="text" name="" id=""
+                                className={`${errors?.address?.message ? 'form-control is-invalid' : 'form-control'}`}
+                                {...register('address')} />
+                            <span className="invalid-feedback">{errors?.address?.message}</span>
                         </div>
-                    </div>
-                    <div className=" mb-3 ">
-                        <label className="label-form">Spa
-                            <div className="container d-flex ">
-                                <div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox"
-                                            name="Chải Lông"
-                                            id="" value="Chải Lông"
+                        <div className="col-lg-4 form-group mb-3 ">
+                            <label className="label-form mb-2">Gender</label>
+                            <select name="" id="" className="form-select"
+                                {...register('gender')}>
+                                <option value="male"  >Male</option>
+                                <option value="female" >Female</option>
+                            </select>
+                        </div>
+                        <div className="col-lg-4 mb-3 ">
+                            <label className="label-form mb-2">Spa
+                                <div className="container d-flex ">
+                                    <div>
+                                        <div className="form-check">
+                                            <input className="for-check-input me-2" type="checkbox"
+                                                name="Chải Lông"
+                                                id="" value="Chải Lông"
 
-                                            {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Chải Lông</label>
+                                                {...register('spa')} />
+                                            <label className="form-check-label" htmlFor="">Chải Lông</label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="for-check-input me-2" type="checkbox"
+                                                name="Cắt Móng"
+                                                id="" value="Cắt Móng"
+
+                                                {...register('spa')} />
+                                            <label className="form-check-label" htmlFor="">Cắt Móng</label>
+                                        </div>
                                     </div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox"
-                                            name="Cắt Móng"
-                                            id="" value="Cắt Móng"
-
-                                            {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Cắt Móng</label>
+                                    <div>
+                                        <div className="form-check">
+                                            <input className="for-check-input me-2" type="checkbox"
+                                                name="Đi Dạo"
+                                                id="" value="Đi Dạo"
+                                                {...register('spa')} />
+                                            <label className="form-check-label" htmlFor="">Đi Dạo</label>
+                                        </div>
+                                        <div className="form-check">
+                                            <input className="for-check-input me-2" type="checkbox"
+                                                name="Tắm Pet"
+                                                id="" value="Tắm Pet"
+                                                {...register('spa')} />
+                                            <label className="form-check-label" htmlFor="">Tắm Pet</label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox"
-                                            name="Đi Dạo"
-                                            id="" value="Đi Dạo"
-                                            {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Đi Dạo</label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox"
-                                            name="Tắm Pet"
-                                            id="" value="Tắm Pet"
-                                            {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Tắm Pet</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </label>
+                            </label>
+                        </div>
                     </div>
-                    <div className="d-flex justify-content-center mb-3">
+
+                    <div className="d-flexmb-3">
                         <NavLink type="button" className="btn btn-secondary me-3" to={'/'}>Back</NavLink>
                         <button type="submit" className="btn btn-danger me-3">Update</button>
                         <button type="reset" className="btn btn-success"
