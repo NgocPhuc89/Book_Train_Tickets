@@ -26,10 +26,22 @@ const CreateCustomer = () => {
             .required("Vui Lòng Nhập Tên")
             .min(5, "Tên Phải Từ 5 Kí Tự ")
             .max(30, "Tên Phải Ít Hơn 30 Kí Tự "),
+        phone: yup.string()
+            .matches(/^(0|\+84)\d{9}$/, 'Số điện thoại không hợp lệ'),
+        province: yup.string()
+            .required("Vui Lòng Chọn Thành Phố"),
+        district: yup.string()
+            .required("Vui Lòng Chọn Quận/Huyện"),
+        ward: yup.string()
+            .required("Vui Lòng Chọn Phường/Xã"),
         address: yup.string()
-            .required("Vui Lòng Nhập Thành Phố")
+            .required("Vui Lòng Nhập Địa Chỉ")
             .max(30, "Thành Phố Phải Ít Hơn 30 Kí Tự "),
+        spa: yup.array()
+            .min(1, 'Bạn phải chọn ít nhất một dịch vụ.'),
     })
+
+
 
     useEffect(() => {
         const action = fetchAllProvince();
@@ -129,7 +141,7 @@ const CreateCustomer = () => {
                                     name="province_id"
                                     id=""
                                     className={`${errors?.province?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.province')}
+                                    {...register('province')}
                                     onChange={onChangeProvince}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
@@ -146,7 +158,7 @@ const CreateCustomer = () => {
                                     name="district_id"
                                     id="district"
                                     className={`${errors?.district?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.district')}
+                                    {...register('district')}
                                     onChange={onChangeDistrict}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
@@ -168,7 +180,7 @@ const CreateCustomer = () => {
                                     name="ward_id"
                                     id="ward"
                                     className={`${errors?.ward?.message ? 'form-control is-invalid' : 'form-control'}`}
-                                    {...register('locationRegion.ward')}
+                                    {...register('ward')}
                                     onChange={onChangeWard}>
                                     <option value="">--Vui Lòng Chọn</option>
                                     {
@@ -189,30 +201,30 @@ const CreateCustomer = () => {
                         </div>
                     </div>
                     <div className=" mb-3 ">
-                        <label className="label-form">Spa
-                            <div className="container d-flex ">
-                                <div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="Chải Lông" id="" value="Chải Lông" {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Chải Lông</label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="Cắt Móng" id="" value="Cắt Móng" {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Cắt Móng</label>
-                                    </div>
+                        <label className="label-form">Spa  </label>
+                        <div className="container d-flex ">
+                            <div>
+                                <div className="form-check">
+                                    <input className="for-check-input me-2" type="checkbox" name="spa" id="spa1" value="Chải Lông" defaultChecked {...register('spa')} />
+                                    <label className="form-check-label" htmlFor="spa1">Chải Lông</label>
                                 </div>
-                                <div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="Đi Dạo" id="" value="Đi Dạo" {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Đi Dạo</label>
-                                    </div>
-                                    <div className="form-check">
-                                        <input className="for-check-input me-2" type="checkbox" name="Tắm Pet" id="" value="Tắm Pet" {...register('spa')} />
-                                        <label className="form-check-label" htmlFor="">Tắm Pet</label>
-                                    </div>
+                                <div className="form-check">
+                                    <input className="for-check-input me-2" type="checkbox" name="spa" id="spa2" value="Cắt Móng" {...register('spa')} />
+                                    <label className="form-check-label" htmlFor="spa2">Cắt Móng</label>
                                 </div>
                             </div>
-                        </label>
+                            <div>
+                                <div className="form-check">
+                                    <input className="for-check-input me-2" type="checkbox" name="spa" id="spa3" value="Đi Dạo" {...register('spa')} />
+                                    <label className="form-check-label" htmlFor="spa3">Đi Dạo</label>
+                                </div>
+                                <div className="form-check">
+                                    <input className="for-check-input me-2" type="checkbox" name="spa" id="spa4" value="Tắm Pet" {...register('spa')} />
+                                    <label className="form-check-label" htmlFor="spa4">Tắm Pet</label>
+                                </div>
+                            </div>
+                        </div>
+                        <span className="invalid-feedback">{errors?.spa?.message}</span>
                     </div>
                     <div className="d-flex justify-content-center mb-3">
                         <NavLink type="button" className="btn btn-secondary me-3" to={'/'}>Back</NavLink>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import CustomerService from "../services/customerService";
 import LocationRegionService from "../services/locationRegionService";
@@ -122,7 +123,7 @@ export const customerSlice = createSlice({
     extraReducers: (builder) => {
         builder  // show list customer & search 
             .addCase(fetchCustomerSearch.pending, (state) => {
-                state.loading = true;
+                // state.loading = true;
             })
             .addCase(fetchCustomerSearch.fulfilled, (state, action) => {
                 state.data = action.payload;
